@@ -8,6 +8,7 @@ import LoadingScreen from "@/components/layout/LoadingScreen";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://vanshavali.in"),
   title: {
     default: "Vanshavali — Preserving Families. Connecting Generations.",
     template: "%s | Vanshavali",
