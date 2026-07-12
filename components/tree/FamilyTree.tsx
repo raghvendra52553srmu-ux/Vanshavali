@@ -132,13 +132,12 @@ export default function FamilyTree({ compact = false, disableControls = false }:
 
   const onNodeClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      if (compact) return;
       const member = (node.data as { member: FamilyMember }).member;
       if (member) {
         setSelectedMember(member);
       }
     },
-    [compact]
+    []
   );
 
   const onConnect = useCallback(
@@ -195,13 +194,11 @@ export default function FamilyTree({ compact = false, disableControls = false }:
         )}
       </ReactFlow>
 
-      {!compact && (
-        <ProfileDrawer
-          member={selectedMember}
-          onClose={() => setSelectedMember(null)}
-          onSelectMember={(m) => setSelectedMember(m)}
-        />
-      )}
+      <ProfileDrawer
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+        onSelectMember={(m) => setSelectedMember(m)}
+      />
     </div>
   );
 }
