@@ -56,7 +56,7 @@ export default function LoadingScreen() {
                 Vanshavali
               </h1>
               <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
-                Preserving Families. Connecting Generations.
+                Preserving Families. Connecting Generations with purvaj.
               </p>
             </motion.div>
 

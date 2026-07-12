@@ -22,6 +22,7 @@ const generationColors: Record<number, { bg: string; ring: string; badge: string
   3: { bg: "#A1887F", ring: "rgba(161,136,127,0.25)", badge: "#A1887F" },
   4: { bg: "#C8A97E", ring: "rgba(200,169,126,0.25)", badge: "#C8A97E" },
   5: { bg: "#3C7A57", ring: "rgba(60,122,87,0.3)", badge: "#3C7A57" },
+  6: { bg: "#427A8C", ring: "rgba(66,122,140,0.3)", badge: "#427A8C" },
 };
 
 const FamilyNode = memo(({ data, selected }: NodeProps<FamilyNodeType>) => {

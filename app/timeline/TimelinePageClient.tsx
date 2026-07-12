@@ -151,12 +151,12 @@ export default function TimelinePageClient() {
             className="text-5xl sm:text-6xl font-light mb-4 leading-tight"
             style={{ fontFamily: "var(--font-heading)", color: "var(--color-text)" }}
           >
-            The Sharma Family
+            The Pandey Family
             <br />
             <span className="text-gradient italic">through time</span>
           </h1>
           <p className="text-base max-w-xl mx-auto" style={{ color: "var(--color-text-secondary)" }}>
-            140 years of births, marriages, achievements, and milestones — every milestone that
+            140+ years of births, marriages, achievements, and milestones — every milestone that
             shaped who we are today.
           </p>
         </motion.div>

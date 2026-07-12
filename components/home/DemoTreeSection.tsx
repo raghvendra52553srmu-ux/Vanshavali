@@ -59,7 +59,7 @@ export default function DemoTreeSection() {
           style={{ fontFamily: "var(--font-heading)", color: "var(--color-text)" }}
         >
           Explore the{" "}
-          <span className="text-gradient italic">Sharma family tree</span>
+          <span className="text-gradient italic">Pandey family tree</span>
         </motion.h2>
         <motion.p
           variants={fadeInUp}

@@ -54,7 +54,7 @@ function buildLayout(members: FamilyMember[]): { nodes: Node[]; edges: Edge[] } 
         position: { x, y },
         data: {
           member,
-          isYou: member.id === "gen5-you",
+          isYou: member.id === "gen6-you",
         },
         draggable: true,
       });
@@ -145,9 +145,9 @@ export default function FamilyTree({ compact = false, disableControls = false }:
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: compact ? 0.4 : 0.15 }}
-        minZoom={0.2}
-        maxZoom={2}
+        fitViewOptions={{ padding: compact ? 0.4 : 0.05 }}
+        minZoom={0.02}
+        maxZoom={3.5}
         nodesDraggable
         nodesConnectable={false}
         elementsSelectable
@@ -172,6 +172,7 @@ export default function FamilyTree({ compact = false, disableControls = false }:
                   3: "#A1887F",
                   4: "#C8A97E",
                   5: "#3C7A57",
+                  6: "#427A8C",
                 };
                 return colors[member?.generation || 1] || "#6D4C41";
               }}
