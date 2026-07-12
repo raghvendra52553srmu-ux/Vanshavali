@@ -121,16 +121,16 @@ const FamilyNode = memo(({ data, selected }: NodeProps<FamilyNodeType>) => {
         </div>
 
         {/* Name */}
-        <div className="text-center mb-2">
+        <div className="text-center mb-2 px-1">
           <p
-            className="text-xs font-semibold leading-tight truncate"
+            className="text-xs font-semibold leading-tight break-words line-clamp-2"
             style={{ color: "var(--color-text)", fontFamily: "var(--font-body)" }}
           >
             {member.firstName}
           </p>
           {member.lastName !== member.firstName && (
             <p
-              className="text-[10px] leading-tight truncate"
+              className="text-[10px] leading-tight break-words mt-0.5"
               style={{ color: "var(--color-text-secondary)" }}
             >
               {member.lastName}

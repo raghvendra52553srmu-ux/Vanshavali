@@ -130,6 +130,17 @@ export default function FamilyTree({ compact = false, disableControls = false }:
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const onNodeClick = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      if (compact) return;
+      const member = (node.data as { member: FamilyMember }).member;
+      if (member) {
+        setSelectedMember(member);
+      }
+    },
+    [compact]
+  );
+
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -143,12 +154,13 @@ export default function FamilyTree({ compact = false, disableControls = false }:
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
         fitViewOptions={{ padding: compact ? 0.4 : 0.05 }}
         minZoom={0.02}
         maxZoom={3.5}
-        nodesDraggable
+        nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
         className="rounded-xl"
@@ -187,6 +199,7 @@ export default function FamilyTree({ compact = false, disableControls = false }:
         <ProfileDrawer
           member={selectedMember}
           onClose={() => setSelectedMember(null)}
+          onSelectMember={(m) => setSelectedMember(m)}
         />
       )}
     </div>
