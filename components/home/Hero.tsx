@@ -131,21 +131,21 @@ function AnimatedTree() {
         </motion.g>
 
         {/* Gen 1 */}
-        <TreeNode x={350} y={80} label="Bhavani" delay={0.2} size="lg" />
+        <TreeNode x={350} y={80} label="Rudranath" delay={0.2} size="lg" />
 
         {/* Gen 2 */}
-        <TreeNode x={220} y={240} label="Mahadev" delay={0.5} size="md" />
-        <TreeNode x={480} y={240} label="Shanti" delay={0.6} size="md" />
+        <TreeNode x={220} y={240} label="Ramhridaya" delay={0.5} size="md" />
+        <TreeNode x={480} y={240} label="Ghisiyawan" delay={0.6} size="md" />
 
         {/* Gen 3 */}
-        <TreeNode x={160} y={390} label="Harinarayan" delay={0.9} size="sm" />
-        <TreeNode x={280} y={390} label="Sunita" delay={1.0} size="sm" />
-        <TreeNode x={440} y={390} label="Priya" delay={1.1} size="sm" />
-        <TreeNode x={540} y={390} label="Rahul" delay={1.2} size="sm" />
+        <TreeNode x={160} y={390} label="Pintu" delay={0.9} size="sm" />
+        <TreeNode x={280} y={390} label="Sonu" delay={1.0} size="sm" />
+        <TreeNode x={440} y={390} label="Ramprasad" delay={1.1} size="sm" />
+        <TreeNode x={540} y={390} label="Ramkrishna" delay={1.2} size="sm" />
 
         {/* Gen 4 */}
-        <TreeNode x={130} y={470} label="Arjun" delay={1.4} size="sm" />
-        <TreeNode x={190} y={470} label="Aditya" delay={1.5} size="sm" />
+        <TreeNode x={130} y={470} label="Suraj" delay={1.4} size="sm" />
+        <TreeNode x={190} y={470} label="Ritik" delay={1.5} size="sm" />
       </svg>
     </div>
   );

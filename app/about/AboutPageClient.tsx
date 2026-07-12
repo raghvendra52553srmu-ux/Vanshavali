@@ -70,8 +70,8 @@ export default function AboutPageClient() {
               Our Story
             </h2>
             <p className="text-white/80 max-w-2xl text-sm sm:text-base leading-relaxed">
-              Vanshavali was born from a personal need. When our founder tried to digitize
-              his 140-year-old family tree, he found only clunky spreadsheets and outdated
+              Vanshavali was born from a personal need. When our founder, Adarsh Pandey, tried to digitize
+              his family's 140-year-old history in Sehuda Kala, Basti, he found only clunky spreadsheets and outdated
               software. He realized that preserving a family&apos;s legacy shouldn&apos;t feel like
               data entry — it should feel like preserving art.
             </p>

@@ -6,25 +6,21 @@ import { TreePine, MessageCircle, Globe, Mail, Share2, ArrowRight } from "lucide
 import { staggerContainer, fadeIn } from "@/lib/animations";
 
 const footerLinks = {
-  Product: [
+  Heritage: [
     { label: "Features", href: "/#features" },
-    { label: "Pricing", href: "/#pricing" },
+    { label: "Preservation Pledge", href: "/#pricing" },
     { label: "Demo Tree", href: "/#demo" },
     { label: "Family Card", href: "/card" },
     { label: "Timeline", href: "/timeline" },
   ],
-  Company: [
+  Vanshavali: [
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
     { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Press Kit", href: "#" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "GDPR", href: "#" },
   ],
 };
 

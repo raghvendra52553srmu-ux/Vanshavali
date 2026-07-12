@@ -58,12 +58,7 @@ function TestimonialCard({ testimonial }: { testimonial: typeof TESTIMONIALS[num
       variants={scaleIn}
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="p-6 rounded-2xl border"
-      style={{
-        background: "var(--color-card)",
-        borderColor: "var(--color-border)",
-        boxShadow: "var(--shadow-md)",
-      }}
+      className="vintage-card"
     >
       {/* Stars */}
       <div className="flex gap-0.5 mb-4">

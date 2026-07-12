@@ -3,7 +3,7 @@ import { Feature, PricingPlan, Testimonial, NavItem, CommandItem } from "@/types
 export const NAV_ITEMS: NavItem[] = [
   { label: "Features", href: "/#features" },
   { label: "Demo", href: "/#demo" },
-  { label: "Pricing", href: "/#pricing" },
+  { label: "Preservation", href: "/#pricing" },
   { label: "Timeline", href: "/timeline" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

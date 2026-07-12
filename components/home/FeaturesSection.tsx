@@ -100,12 +100,7 @@ function FeatureCard({
       variants={scaleIn}
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="group relative p-6 rounded-2xl border cursor-default"
-      style={{
-        background: "var(--color-card)",
-        borderColor: "var(--color-border)",
-        boxShadow: "var(--shadow-sm)",
-      }}
+      className="group relative cursor-default vintage-card"
     >
       {/* Hover glow */}
       <div

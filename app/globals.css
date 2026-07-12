@@ -230,3 +230,73 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-lg) !important;
   color: var(--color-text) !important;
 }
+
+/* Vintage Card and Heritage Layouts */
+.vintage-card {
+  position: relative;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  padding: 28px;
+  border-radius: var(--radius-lg);
+}
+
+.vintage-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(109, 76, 65, 0.2);
+  pointer-events: none;
+  border-radius: calc(var(--radius-lg) - 6px);
+  transition: border-color var(--transition-base);
+}
+
+.vintage-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent-secondary);
+}
+
+.vintage-card:hover::before {
+  border-color: rgba(109, 76, 65, 0.4);
+}
+
+/* Elegant hand-drawn feel dividers */
+.divider-heritage {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem auto;
+  max-width: 240px;
+}
+
+.divider-heritage::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent-secondary) 50%, transparent 100%);
+  opacity: 0.5;
+}
+
+.divider-heritage::after {
+  content: "✦  ❈  ✦";
+  color: var(--color-accent);
+  background: var(--color-bg);
+  padding: 0 16px;
+  font-size: 11px;
+  font-family: var(--font-heading);
+  letter-spacing: 0.2em;
+  z-index: 1;
+}
+
+/* Typography elements */
+.text-serif-italic {
+  font-family: var(--font-heading);
+  font-style: italic;
+}
+
