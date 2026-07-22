@@ -216,7 +216,7 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
             onClick={() => fileInputRef.current?.click()}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
             style={{
               color: "var(--color-text-secondary)",
               borderColor: "var(--color-border)",
@@ -230,7 +230,7 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
             onClick={handleExportCSV}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
             style={{
               color: "var(--color-text-secondary)",
               borderColor: "var(--color-border)",
