@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Share2, Download, QrCode, MapPin, Users, GitBranch, TreePine, Sparkles } from "lucide-react";
+import { toPng } from "html-to-image";
 import { familyData } from "@/data/family";
 import { useSonner } from "@/hooks/useSonner";
 import { staggerContainer, fadeInUp, scaleIn } from "@/lib/animations";
@@ -21,9 +22,25 @@ export default function FamilyCardClient() {
     toast("Card link copied!", "Share it with your family.");
   };
 
-  const handleDownload = () => {
-    toast("Download feature coming soon!", "We're adding PDF export shortly.");
-  };
+  const handleDownload = useCallback(() => {
+    if (cardRef.current === null) {
+      return;
+    }
+    toast("Preparing download...", "Please wait.");
+    
+    toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = `family-card-${familyData.familyName.toLowerCase()}.png`;
+        link.href = dataUrl;
+        link.click();
+        toast("Download successful!", "Your family card has been saved.");
+      })
+      .catch((err) => {
+        console.error("Failed to download image", err);
+        toast("Download failed", "An error occurred while saving the card.");
+      });
+  }, [toast]);
 
   return (
     <div

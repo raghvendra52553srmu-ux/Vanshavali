@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, forwardRef, useImperativeHandle } from "react";
 import {
   ReactFlow,
   Background,
@@ -14,8 +14,12 @@ import {
   BackgroundVariant,
   Node,
   Edge,
+  useReactFlow,
+  getNodesBounds,
+  getViewportForBounds,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { toPng } from "html-to-image";
 
 import { familyData } from "@/data/family";
 import { FamilyMember } from "@/types/family";
@@ -105,15 +109,20 @@ function buildLayout(members: FamilyMember[]): { nodes: Node[]; edges: Edge[] } 
 
 const nodeTypes = { familyNode: FamilyNode };
 
-interface FamilyTreeProps {
+export interface FamilyTreeRef {
+  exportTree: (familyName: string) => Promise<void>;
+}
+
+export interface FamilyTreeProps {
   treeId?: string;
   initialMembers?: FamilyMember[];
   compact?: boolean;
   disableControls?: boolean;
 }
 
-export default function FamilyTree({ treeId, initialMembers, compact = false, disableControls = false }: FamilyTreeProps) {
-  const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
+const FamilyTree = forwardRef<FamilyTreeRef, FamilyTreeProps>(
+  ({ treeId, initialMembers, compact = false, disableControls = false }, ref) => {
+    const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
 
   const { nodes: initialNodes, edges: initialEdges } = useMemo(
     () => buildLayout(initialMembers || familyData.members),
@@ -160,6 +169,23 @@ export default function FamilyTree({ treeId, initialMembers, compact = false, di
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
+
+  useImperativeHandle(ref, () => ({
+    exportTree: async (familyName: string) => {
+      const el = document.querySelector(".react-flow") as HTMLElement;
+      if (!el) throw new Error("Could not find React Flow container");
+      
+      const dataUrl = await toPng(el, { 
+        cacheBust: true, 
+        pixelRatio: 2, 
+        backgroundColor: "var(--color-bg)" 
+      });
+      const link = document.createElement("a");
+      link.download = `${familyName.toLowerCase()}-family-tree.png`;
+      link.href = dataUrl;
+      link.click();
+    }
+  }));
 
   return (
     <div className="relative w-full h-full">
@@ -218,4 +244,6 @@ export default function FamilyTree({ treeId, initialMembers, compact = false, di
       />
     </div>
   );
-}
+});
+
+export default FamilyTree;

@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TreePine, Download, Share2, Users } from "lucide-react";
+import { TreePine, Download, Share2, Users, FileUp, FileDown, Image as ImageIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useSonner } from "@/hooks/useSonner";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import type { FamilyTreeRef } from "@/components/tree/FamilyTree";
+import Papa from "papaparse";
 
 const FamilyTree = dynamic(() => import("@/components/tree/FamilyTree"), {
   ssr: false,
@@ -33,10 +35,13 @@ interface TreePageClientProps {
 }
 
 export default function TreePageClient({ treeId }: TreePageClientProps) {
-  const { toast } = useSonner();
+  const { toast, success, error: toastError } = useSonner();
   const router = useRouter();
+  const treeRef = useRef<FamilyTreeRef>(null);
 
-  const { data: tree, isLoading, error } = useQuery({
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: tree, isLoading, error, refetch } = useQuery({
     queryKey: ["tree", treeId],
     queryFn: async () => {
       const res = await fetch(`/api/trees/${treeId}`);
@@ -56,6 +61,56 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
       router.push("/login");
     }
   }, [error, router]);
+
+  const handleExportCSV = () => {
+    if (!tree?.members || tree.members.length === 0) {
+      toastError("No members to export");
+      return;
+    }
+    const csv = Papa.unparse(tree.members);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${tree.familyName}-family-tree.csv`;
+    link.click();
+    success("CSV exported successfully");
+  };
+
+  const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        if (!results.data || results.data.length === 0) {
+          toastError("CSV file is empty or invalid");
+          return;
+        }
+
+        toast("Importing members...", "Please wait while we process the file.");
+        try {
+          const res = await fetch("/api/members/import", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ treeId, members: results.data }),
+          });
+
+          if (!res.ok) throw new Error("Import failed");
+          
+          success("Members imported successfully!");
+          refetch(); // Refresh the tree data
+        } catch (err) {
+          console.error(err);
+          toastError("Failed to import members");
+        } finally {
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+      },
+      error: () => toastError("Error parsing CSV file"),
+    });
+  };
 
   if (isLoading) {
     return (
@@ -147,8 +202,56 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
               </span>
             </div>
           </div>
+          
+          {/* Hidden file input for CSV import */}
+          <input
+            type="file"
+            accept=".csv"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleImportCSV}
+          />
+          
           <motion.button
-            onClick={() => toast("PDF export coming soon!")}
+            onClick={() => fileInputRef.current?.click()}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            style={{
+              color: "var(--color-text-secondary)",
+              borderColor: "var(--color-border)",
+            }}
+          >
+            <FileUp className="w-3.5 h-3.5" />
+            Import CSV
+          </motion.button>
+          
+          <motion.button
+            onClick={handleExportCSV}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            style={{
+              color: "var(--color-text-secondary)",
+              borderColor: "var(--color-border)",
+            }}
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            CSV
+          </motion.button>
+
+          <motion.button
+            onClick={() => {
+              if (treeRef.current) {
+                toast("Preparing export...", "Generating high-quality image.");
+                treeRef.current.exportTree(tree.familyName).catch(err => {
+                  console.error(err);
+                  toastError("Could not generate the image.");
+                });
+              } else {
+                toastError("Tree component not loaded.");
+              }
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
@@ -157,8 +260,8 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
               borderColor: "var(--color-border)",
             }}
           >
-            <Download className="w-3.5 h-3.5" />
-            Export
+            <ImageIcon className="w-3.5 h-3.5" />
+            Image
           </motion.button>
           <motion.button
             onClick={() => {
@@ -178,7 +281,7 @@ export default function TreePageClient({ treeId }: TreePageClientProps) {
 
       {/* Tree Canvas */}
       <div className="flex-1 relative overflow-hidden">
-        <FamilyTree treeId={tree.id} initialMembers={tree.members} />
+        <FamilyTree ref={treeRef} treeId={tree.id} initialMembers={tree.members} />
       </div>
 
       {/* Legend */}
