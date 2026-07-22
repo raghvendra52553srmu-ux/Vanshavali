@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
+import { Providers } from "@/components/providers/Providers";
 import { Toaster } from "sonner";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -76,12 +76,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange={false}
-        >
+        <Providers>
           <LoadingScreen />
           <Navbar />
           <main>{children}</main>
@@ -98,7 +93,7 @@ export default function RootLayout({
               },
             }}
           />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

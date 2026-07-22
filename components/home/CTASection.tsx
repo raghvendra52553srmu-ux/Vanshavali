@@ -69,7 +69,7 @@ export default function CTASection() {
             transition={{ delay: 0.55 }}
             className="flex flex-col sm:flex-row gap-3 justify-center"
           >
-            <Link href="/tree">
+            <Link href="/dashboard">
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}

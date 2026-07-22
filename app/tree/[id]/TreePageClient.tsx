@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { TreePine, Download, Share2, Users } from "lucide-react";
 import dynamic from "next/dynamic";
-import { familyData } from "@/data/family";
 import { useSonner } from "@/hooks/useSonner";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const FamilyTree = dynamic(() => import("@/components/tree/FamilyTree"), {
   ssr: false,
@@ -26,10 +28,64 @@ const FamilyTree = dynamic(() => import("@/components/tree/FamilyTree"), {
   ),
 });
 
-export default function TreePageClient() {
+interface TreePageClientProps {
+  treeId: string;
+}
+
+export default function TreePageClient({ treeId }: TreePageClientProps) {
   const { toast } = useSonner();
-  const totalMembers = familyData.members.length;
-  const aliveMembers = familyData.members.filter((m) => m.isAlive).length;
+  const router = useRouter();
+
+  const { data: tree, isLoading, error } = useQuery({
+    queryKey: ["tree", treeId],
+    queryFn: async () => {
+      const res = await fetch(`/api/trees/${treeId}`);
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("Unauthorized");
+        }
+        throw new Error("Failed to fetch tree");
+      }
+      return res.json();
+    },
+    retry: false
+  });
+
+  useEffect(() => {
+    if (error?.message === "Unauthorized") {
+      router.push("/login");
+    }
+  }, [error, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !tree) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background flex-col gap-4">
+        <h1 className="text-2xl font-bold">Error loading tree</h1>
+        <p className="text-muted-foreground text-sm">
+          {error?.message === "Unauthorized" 
+            ? "You don't have permission to view this tree." 
+            : "The tree you're looking for doesn't exist or an error occurred."}
+        </p>
+        <button 
+          onClick={() => router.push("/dashboard")}
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  const totalMembers = tree.members?.length || 0;
+  const aliveMembers = tree.members?.filter((m: any) => m.isAlive).length || 0;
 
   return (
     <div
@@ -61,13 +117,13 @@ export default function TreePageClient() {
               className="text-sm font-semibold"
               style={{ fontFamily: "var(--font-heading)", color: "var(--color-text)" }}
             >
-              {familyData.familyName} Family Tree
+              {tree.familyName} Family Tree
             </h1>
             <p
               className="text-xs"
               style={{ color: "var(--color-text-tertiary)", fontFamily: "var(--font-mono)" }}
             >
-              est. {familyData.established} · {familyData.origin}
+              {tree.established ? `est. ${tree.established}` : "Unknown est."} · {tree.origin || "Unknown origin"}
             </p>
           </div>
         </div>
@@ -122,7 +178,7 @@ export default function TreePageClient() {
 
       {/* Tree Canvas */}
       <div className="flex-1 relative overflow-hidden">
-        <FamilyTree />
+        <FamilyTree treeId={tree.id} initialMembers={tree.members} />
       </div>
 
       {/* Legend */}
@@ -140,11 +196,9 @@ export default function TreePageClient() {
           Legend:
         </span>
         {[
-          { label: "Gen 1 (Patriarchs)", color: "#6D4C41" },
-          { label: "Gen 2 (Grandparents)", color: "#795548" },
-          { label: "Gen 3 (Parents)", color: "#A1887F" },
-          { label: "Gen 4 (Your Generation)", color: "#C8A97E" },
-          { label: "Gen 5 (You)", color: "#3C7A57" },
+          { label: "Male", color: "#3B82F6" },
+          { label: "Female", color: "#EC4899" },
+          { label: "Other", color: "#10B981" },
         ].map(({ label, color }) => (
           <div key={label} className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />

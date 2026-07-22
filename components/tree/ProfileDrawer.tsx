@@ -14,11 +14,12 @@ import { slideInRight, overlayVariants } from "@/lib/animations";
 
 interface ProfileDrawerProps {
   member: FamilyMember | null;
+  allMembers?: FamilyMember[];
   onClose: () => void;
   onSelectMember?: (member: FamilyMember) => void;
 }
 
-export default function ProfileDrawer({ member, onClose, onSelectMember }: ProfileDrawerProps) {
+export default function ProfileDrawer({ member, allMembers = [], onClose, onSelectMember }: ProfileDrawerProps) {
   const [imgError, setImgError] = useState(false);
 
   const initials = member
@@ -26,15 +27,15 @@ export default function ProfileDrawer({ member, onClose, onSelectMember }: Profi
     : "";
 
   const spouse = member?.spouseId
-    ? familyData.members.find((m) => m.id === member.spouseId)
+    ? allMembers.find((m) => m.id === member.spouseId)
     : null;
 
   const parents = member?.parentIds
-    ? familyData.members.filter((m) => member.parentIds.includes(m.id))
+    ? allMembers.filter((m) => member.parentIds.includes(m.id))
     : [];
 
   const children = member
-    ? familyData.members.filter((m) => m.parentIds.includes(member.id))
+    ? allMembers.filter((m) => m.parentIds?.includes(member.id))
     : [];
 
   return (
@@ -58,22 +59,10 @@ export default function ProfileDrawer({ member, onClose, onSelectMember }: Profi
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed right-0 top-0 bottom-0 z-50 w-full sm:w-96 lg:w-[420px] overflow-y-auto"
-          style={{
-            background: "var(--color-card)",
-            borderLeft: "1px solid var(--color-border)",
-            boxShadow: "var(--shadow-xl)",
-          }}
+          className="fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[420px] lg:w-[460px] overflow-y-auto glass-strong border-l border-[var(--color-border)] shadow-2xl"
         >
           {/* Header */}
-          <div
-            className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b"
-            style={{
-              background: "var(--color-card)",
-              borderColor: "var(--color-border)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
+          <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-md">
             <span
               className="text-sm font-medium"
               style={{ color: "var(--color-text-secondary)" }}
@@ -117,12 +106,12 @@ export default function ProfileDrawer({ member, onClose, onSelectMember }: Profi
               className="flex items-start gap-4"
             >
               <div
-                className="relative flex-shrink-0 rounded-2xl overflow-hidden"
-                style={{ width: 80, height: 80, border: "2px solid var(--color-border)" }}
+                className="relative flex-shrink-0 rounded-2xl overflow-hidden bg-muted"
+                style={{ width: 88, height: 88, border: "2px solid var(--color-border)" }}
               >
                 {!imgError ? (
                   <Image
-                    src={member.photo}
+                    src={member.photo || "/placeholder.svg"}
                     alt={member.name}
                     fill
                     className="object-cover"
@@ -130,7 +119,7 @@ export default function ProfileDrawer({ member, onClose, onSelectMember }: Profi
                   />
                 ) : (
                   <div
-                    className="w-full h-full flex items-center justify-center text-xl font-semibold text-white"
+                    className="w-full h-full flex items-center justify-center text-2xl font-semibold text-white font-heading"
                     style={{ background: "var(--color-accent)" }}
                   >
                     {initials}
@@ -366,14 +355,14 @@ function RelationshipGroup({
             >
               {!imgErrors[m.id] ? (
                 <Image
-                  src={m.photo}
+                  src={m.photo || "/placeholder.svg"}
                   alt={m.name}
                   fill
                   className="object-cover"
                   onError={() => setImgErrors((prev) => ({ ...prev, [m.id]: true }))}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white text-[10px] font-bold">
+                <div className="w-full h-full flex items-center justify-center text-white text-[10px] font-bold font-heading">
                   {m.firstName[0]}
                 </div>
               )}

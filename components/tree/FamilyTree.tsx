@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   ReactFlow,
   Background,
@@ -106,16 +106,18 @@ function buildLayout(members: FamilyMember[]): { nodes: Node[]; edges: Edge[] } 
 const nodeTypes = { familyNode: FamilyNode };
 
 interface FamilyTreeProps {
+  treeId?: string;
+  initialMembers?: FamilyMember[];
   compact?: boolean;
   disableControls?: boolean;
 }
 
-export default function FamilyTree({ compact = false, disableControls = false }: FamilyTreeProps) {
+export default function FamilyTree({ treeId, initialMembers, compact = false, disableControls = false }: FamilyTreeProps) {
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
 
   const { nodes: initialNodes, edges: initialEdges } = useMemo(
-    () => buildLayout(familyData.members),
-    []
+    () => buildLayout(initialMembers || familyData.members),
+    [initialMembers]
   );
 
   const [nodes, setNodes, onNodesChange] = useNodesState(
@@ -129,6 +131,20 @@ export default function FamilyTree({ compact = false, disableControls = false }:
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  // Sync state when initialMembers change (e.g. from React Query)
+  useEffect(() => {
+    setNodes(
+      initialNodes.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          onSelect: (member: FamilyMember) => setSelectedMember(member),
+        },
+      }))
+    );
+    setEdges(initialEdges);
+  }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   const onNodeClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
@@ -196,6 +212,7 @@ export default function FamilyTree({ compact = false, disableControls = false }:
 
       <ProfileDrawer
         member={selectedMember}
+        allMembers={initialMembers || familyData.members}
         onClose={() => setSelectedMember(null)}
         onSelectMember={(m) => setSelectedMember(m)}
       />

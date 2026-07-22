@@ -4,18 +4,18 @@
 
 :root {
   /* Brand Colors */
-  --color-bg: #FAF8F5;
-  --color-bg-secondary: #F3EFE9;
-  --color-text: #1C1C1C;
-  --color-text-secondary: #666666;
+  --color-bg: #F7F4EF;
+  --color-bg-secondary: #EBE5D9;
+  --color-text: #1E1E1E;
+  --color-text-secondary: #6F6F6F;
   --color-text-tertiary: #999999;
-  --color-accent: #6D4C41;
-  --color-accent-secondary: #A1887F;
-  --color-highlight: #C8A97E;
+  --color-accent: #6B4F3B;
+  --color-accent-secondary: #A67C52;
+  --color-highlight: #C89B5C;
   --color-card: #FFFFFF;
-  --color-border: #ECE6E1;
-  --color-success: #3C7A57;
-  --color-error: #C84C4C;
+  --color-border: #E8DFD5;
+  --color-success: #3F7D58;
+  --color-error: #C74B50;
 
   /* Typography */
   --font-heading: 'Cormorant Garamond', Georgia, serif;

@@ -118,7 +118,7 @@ export default function DemoTreeSection() {
         transition={{ delay: 0.8 }}
         className="text-center mt-8"
       >
-        <Link href="/tree">
+        <Link href="/dashboard">
           <motion.button
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
