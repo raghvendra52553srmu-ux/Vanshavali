@@ -3,22 +3,70 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth Required Models
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  trees     Tree[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("USER") // USER, ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
+  trees         Tree[]    // Trees owned by the user
+  treeMemberships TreeMember[] // Trees where user is a collaborator
 }
 
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Application Domain Models
+
 model Tree {
-  id               String         @id @default(uuid())
+  id               String         @id @default(cuid())
   familyName       String
   motto            String?
   origin           String?
@@ -28,31 +76,52 @@ model Tree {
   isPublic         Boolean        @default(false)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  
   members          Member[]
+  collaborators    TreeMember[]
   timelineEvents   TimelineEvent[]
+  albums           Album[]
+
+  @@index([ownerId])
+}
+
+model TreeMember {
+  id        String   @id @default(cuid())
+  treeId    String
+  userId    String
+  role      String   @default("VIEWER") // OWNER, ADMIN, EDITOR, VIEWER, GUEST
+  tree      Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([treeId, userId])
+  @@index([userId])
 }
 
 model Member {
-  id             String         @id @default(uuid())
+  id             String         @id @default(cuid())
   treeId         String
   tree           Tree           @relation(fields: [treeId], references: [id], onDelete: Cascade)
   firstName      String
   lastName       String
+  nickname       String?
   gender         String         // male, female, other
   dateOfBirth    String
   dateOfDeath    String?
   isAlive        Boolean        @default(true)
   photo          String?
   occupation     String?
+  education      String?
+  bio            String?
+  phone          String?
+  email          String?
+  address        String?
   city           String?
   state          String?
   country        String?
-  bio            String?
-  achievements   String?        // comma-separated or JSON string
-  hobbies        String?        // comma-separated or JSON string
-  education      String?
-  email          String?
-  phone          String?
+  achievements   String?
+  hobbies        String?
+  socialLinks    String?        // JSON string
   generation     Int            @default(0)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -60,32 +129,67 @@ model Member {
   // Relationships
   relationshipsAsMember1 Relationship[] @relation("Member1")
   relationshipsAsMember2 Relationship[] @relation("Member2")
+
+  @@index([treeId])
 }
 
 model Relationship {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   member1Id   String
   member2Id   String
-  type        String   // PARENT, SPOUSE, SIBLING
+  type        String   // PARENT, SPOUSE, SIBLING, CHILD
   member1     Member   @relation("Member1", fields: [member1Id], references: [id], onDelete: Cascade)
   member2     Member   @relation("Member2", fields: [member2Id], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 
   @@unique([member1Id, member2Id, type])
+  @@index([member1Id])
+  @@index([member2Id])
 }
 
 model TimelineEvent {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   treeId      String
   tree        Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
   date        String
   year        Int
   title       String
   description String
-  type        String   // birth, death, marriage, achievement, event, migration
+  type        String   // birth, death, marriage, achievement, festival, reunion, migration
   memberId    String?
   memberName  String?
   location    String?
   icon        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([treeId])
+  @@index([year])
+}
+
+model Album {
+  id          String   @id @default(cuid())
+  treeId      String
+  tree        Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  media       Media[]
+
+  @@index([treeId])
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  albumId     String
+  album       Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  url         String
+  publicId    String   // Cloudinary public ID
+  type        String   // image, video
+  caption     String?
+  createdAt   DateTime @default(now())
+
+  @@index([albumId])
 }
